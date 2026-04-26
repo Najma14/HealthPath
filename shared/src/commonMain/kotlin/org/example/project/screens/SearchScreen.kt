@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.example.project.components.AppToolbar
 import org.example.project.components.HospitalListCard
+import org.example.project.components.HospitalSearchField
 import org.example.project.data.sampleHospitals
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,26 +63,10 @@ fun SearchScreen(
                 .weight(1f)
                 .padding(horizontal = 20.dp)
         ) {
-            OutlinedTextField(
+            HospitalSearchField(
                 value = query,
                 onValueChange = { query = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                placeholder = {
-                    Text(
-                        text = "Search hospitals…",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
-                    )
-                },
-                singleLine = true,
-                shape = RoundedCornerShape(14.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                    focusedBorderColor = MaterialTheme.colorScheme.outline,
-                )
+                modifier = Modifier.focusRequester(focusRequester),
             )
 
             Spacer(Modifier.height(8.dp))

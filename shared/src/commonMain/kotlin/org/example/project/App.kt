@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import org.example.project.auth.createAuthStorage
 import org.example.project.screens.HomeScreen
 import org.example.project.screens.HospitalBrowseScreen
 import org.example.project.screens.LoginScreen
@@ -49,6 +50,7 @@ fun App() {
                 color = MaterialTheme.colorScheme.background,
             ) {
                 var screen by remember { mutableStateOf<Screen>(Screen.Splash) }
+                val authStorage = remember { createAuthStorage() }
                 var favoriteHospitalIds by remember { mutableStateOf(setOf<String>()) }
                 val toggleFavorite: (String) -> Unit = { id: String ->
                     favoriteHospitalIds =
@@ -58,18 +60,29 @@ fun App() {
 
                 when (screen) {
                     Screen.Splash -> SplashScreen(
-                        onDone = { screen = Screen.Login }
+                        onDone = {
+                            screen = if (authStorage.hasSession()) Screen.Home else Screen.Login
+                        },
                     )
                     Screen.Login -> LoginScreen(
-                        onLogin = { screen = Screen.Home },
+                        onLogin = { email, password ->
+                            authStorage.saveSession(email, password)
+                            screen = Screen.Home
+                        },
                         onGoToRegister = { screen = Screen.Register }
                     )
                     Screen.Register -> RegisterScreen(
-                        onRegister = { screen = Screen.Home },
+                        onRegister = { email, password ->
+                            authStorage.saveSession(email, password)
+                            screen = Screen.Home
+                        },
                         onBackToLogin = { screen = Screen.Login }
                     )
                     Screen.Home -> HomeScreen(
-                        onLogout = { screen = Screen.Login },
+                        onLogout = {
+                            authStorage.clear()
+                            screen = Screen.Login
+                        },
                         onSearch = { screen = Screen.Search },
                         favoriteHospitalIds = favoriteHospitalIds,
                         onToggleFavorite = toggleFavorite,

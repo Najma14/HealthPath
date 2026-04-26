@@ -38,6 +38,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +58,7 @@ import healthpath.shared.generated.resources.search_icon
 import org.example.project.components.AdvancedBottomBar
 import org.example.project.components.HomeBottomTab
 import org.example.project.components.HospitalListCard
+import org.example.project.components.HospitalSearchField
 import org.example.project.data.HospitalBrowseMode
 import org.example.project.data.sampleHospitals
 import org.example.project.theme.AppTheme
@@ -113,7 +115,7 @@ fun HomeScreen(
             when (selectedTab) {
                 HomeBottomTab.Home -> {
                     Text(
-                        text = "Find you Hospital",
+                        text = "Find your Hospital",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold,
                     )
@@ -251,6 +253,15 @@ private fun FavouritesTab(
         all.filter { it.id in favoriteHospitalIds }
     }
 
+    var query by remember { mutableStateOf("") }
+    LaunchedEffect(favoriteHospitalIds) {
+        if (favoriteHospitalIds.isEmpty()) query = ""
+    }
+    val displayed = remember(query, favourites) {
+        val q = query.trim()
+        if (q.isEmpty()) favourites else favourites.filter { it.name.contains(q, ignoreCase = true) }
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -298,20 +309,37 @@ private fun FavouritesTab(
             }
         } else {
             item {
-                Text(
-                    text = "${favourites.size} saved hospitals",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                Spacer(Modifier.height(12.dp))
+                Column(Modifier.fillMaxWidth()) {
+                    HospitalSearchField(
+                        value = query,
+                        onValueChange = { query = it },
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "${displayed.size} saved hospitals",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    Spacer(Modifier.height(12.dp))
+                }
             }
-            itemsIndexed(favourites) { idx, h ->
-                HospitalListCard(
-                    hospital = h,
-                    accent = if (idx % 2 == 0) Color(0xFF4F7DF3) else Color(0xFF8BC34A),
-                    isFavorite = true,
-                    onToggleFavorite = { onToggleFavorite(h.id) },
-                )
+            if (displayed.isEmpty()) {
+                item {
+                    Text(
+                        text = "No favourites match your search.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            } else {
+                itemsIndexed(displayed) { idx, h ->
+                    HospitalListCard(
+                        hospital = h,
+                        accent = if (idx % 2 == 0) Color(0xFF4F7DF3) else Color(0xFF8BC34A),
+                        isFavorite = true,
+                        onToggleFavorite = { onToggleFavorite(h.id) },
+                    )
+                }
             }
         }
     }

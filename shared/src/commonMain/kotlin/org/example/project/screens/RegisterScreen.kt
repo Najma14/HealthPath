@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-    onRegister: () -> Unit,
+    onRegister: (email: String, password: String) -> Unit,
     onBackToLogin: () -> Unit,
 ) {
     var name by remember { mutableStateOf("") }
@@ -152,7 +152,7 @@ fun RegisterScreen(
                 Spacer(Modifier.height(20.dp))
 
                 Button(
-                    onClick = onRegister,
+                    onClick = { onRegister(email, password) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

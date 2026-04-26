@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    onLogin: () -> Unit,
+    onLogin: (email: String, password: String) -> Unit,
     onGoToRegister: () -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
@@ -142,7 +142,7 @@ fun LoginScreen(
                 Spacer(Modifier.height(18.dp))
 
                 Button(
-                    onClick = onLogin,
+                    onClick = { onLogin(email, password) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
