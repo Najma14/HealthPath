@@ -28,6 +28,7 @@ import org.example.project.components.AppToolbar
 import org.example.project.components.HospitalListCard
 import org.example.project.components.HospitalSearchField
 import org.example.project.data.sampleHospitals
+import org.example.project.data.sampleServices
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +38,7 @@ fun SearchScreen(
     onToggleFavorite: (String) -> Unit,
 ) {
     val all = remember { sampleHospitals() }
+    val allServices = remember { sampleServices() }
 
     // Always start empty so the field opens focused with no “filled” text.
     var query by remember { mutableStateOf("") }
@@ -45,9 +47,21 @@ fun SearchScreen(
         focusRequester.requestFocus()
     }
 
-    val filtered = remember(query, all) {
+    val filteredHospitals = remember(query, all, allServices) {
         val q = query.trim()
-        if (q.isEmpty()) all else all.filter { it.name.contains(q, ignoreCase = true) }
+        if (q.isEmpty()) {
+            all
+        } else {
+            val matchingServiceIds = allServices
+                .asSequence()
+                .filter { it.name.contains(q, ignoreCase = true) || it.category.contains(q, ignoreCase = true) }
+                .map { it.id }
+                .toSet()
+
+            all.filter { h ->
+                h.name.contains(q, ignoreCase = true) || h.serviceIds.any { it in matchingServiceIds }
+            }
+        }
     }
 
     Column(
@@ -67,11 +81,12 @@ fun SearchScreen(
                 value = query,
                 onValueChange = { query = it },
                 modifier = Modifier.focusRequester(focusRequester),
+                placeholder = "Search services / hospitals…",
             )
 
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "${filtered.size} hospitals found in Chennai India",
+                text = "${filteredHospitals.size} hospitals found in Chennai India",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -82,13 +97,23 @@ fun SearchScreen(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 20.dp)
             ) {
-                itemsIndexed(filtered) { idx, h ->
-                    HospitalListCard(
-                        hospital = h,
-                        accent = if (idx % 2 == 0) Color(0xFF4F7DF3) else Color(0xFF8BC34A),
-                        isFavorite = h.id in favoriteHospitalIds,
-                        onToggleFavorite = { onToggleFavorite(h.id) },
-                    )
+                if (filteredHospitals.isEmpty()) {
+                    item {
+                        Text(
+                            text = "No hospitals match your search.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                } else {
+                    itemsIndexed(filteredHospitals) { idx, h ->
+                        HospitalListCard(
+                            hospital = h,
+                            accent = if (idx % 2 == 0) Color(0xFF4F7DF3) else Color(0xFF8BC34A),
+                            isFavorite = h.id in favoriteHospitalIds,
+                            onToggleFavorite = { onToggleFavorite(h.id) },
+                        )
+                    }
                 }
             }
         }

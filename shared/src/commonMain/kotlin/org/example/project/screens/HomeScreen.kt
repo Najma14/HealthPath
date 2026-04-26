@@ -106,7 +106,7 @@ fun HomeScreen(
 
             Spacer(Modifier.height(16.dp))
             SearchBar(
-                placeholder = "Search for diagnois / hospital",
+                placeholder = "Search for diagnosis / service / hospital",
                 onClick = onSearch
             )
 

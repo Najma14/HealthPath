@@ -16,6 +16,7 @@ data class Hospital(
     val distanceKm: Double,
     val isTrending: Boolean = false,
     val isNew: Boolean = false,
+    val serviceIds: Set<String> = emptySet(),
 )
 
 fun sampleHospitals(): List<Hospital> = listOf(
@@ -26,6 +27,13 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "51k rating",
         distanceKm = 2.9,
         isTrending = true,
+        serviceIds = setOf(
+            "svc_cardiology",
+            "svc_dermatology",
+            "svc_labs",
+            "svc_mri",
+            "svc_ct",
+        ),
     ),
     Hospital(
         id = "city_care",
@@ -33,6 +41,12 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.2,
         ratingCountText = "12k rating",
         distanceKm = 4.1,
+        serviceIds = setOf(
+            "svc_general_physician",
+            "svc_pediatrics",
+            "svc_labs",
+            "svc_xray",
+        ),
     ),
     Hospital(
         id = "green_valley",
@@ -41,6 +55,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "4.8k rating",
         distanceKm = 1.4,
         isNew = true,
+        serviceIds = setOf(
+            "svc_general_physician",
+            "svc_dermatology",
+            "svc_dentistry",
+        ),
     ),
     Hospital(
         id = "lifeline_multi",
@@ -49,6 +68,12 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "38k rating",
         distanceKm = 3.2,
         isTrending = true,
+        serviceIds = setOf(
+            "svc_cardiology",
+            "svc_orthopedics",
+            "svc_labs",
+            "svc_ct",
+        ),
     ),
     Hospital(
         id = "sri_ramakrishna",
@@ -56,6 +81,12 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.4,
         ratingCountText = "22k rating",
         distanceKm = 5.6,
+        serviceIds = setOf(
+            "svc_cardiology",
+            "svc_diabetes",
+            "svc_labs",
+            "svc_xray",
+        ),
     ),
     Hospital(
         id = "metro_heart",
@@ -64,6 +95,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "19k rating",
         distanceKm = 6.8,
         isTrending = true,
+        serviceIds = setOf(
+            "svc_cardiology",
+            "svc_ct",
+            "svc_mri",
+        ),
     ),
     Hospital(
         id = "kauvery_omr",
@@ -71,6 +107,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.3,
         ratingCountText = "9.2k rating",
         distanceKm = 8.1,
+        serviceIds = setOf(
+            "svc_pediatrics",
+            "svc_ent",
+            "svc_labs",
+        ),
     ),
     Hospital(
         id = "global_health",
@@ -78,6 +119,13 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.5,
         ratingCountText = "41k rating",
         distanceKm = 12.4,
+        serviceIds = setOf(
+            "svc_cardiology",
+            "svc_orthopedics",
+            "svc_psychiatry",
+            "svc_labs",
+            "svc_mri",
+        ),
     ),
     Hospital(
         id = "dr_mehta",
@@ -86,6 +134,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "6.1k rating",
         distanceKm = 2.1,
         isNew = true,
+        serviceIds = setOf(
+            "svc_general_physician",
+            "svc_diabetes",
+            "svc_labs",
+        ),
     ),
     Hospital(
         id = "fortis_malar",
@@ -94,6 +147,12 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "28k rating",
         distanceKm = 7.3,
         isTrending = true,
+        serviceIds = setOf(
+            "svc_cardiology",
+            "svc_ent",
+            "svc_labs",
+            "svc_ct",
+        ),
     ),
     Hospital(
         id = "billroth",
@@ -101,6 +160,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.2,
         ratingCountText = "15k rating",
         distanceKm = 4.9,
+        serviceIds = setOf(
+            "svc_general_physician",
+            "svc_orthopedics",
+            "svc_xray",
+        ),
     ),
     Hospital(
         id = "prashanth",
@@ -108,6 +172,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.3,
         ratingCountText = "11k rating",
         distanceKm = 9.5,
+        serviceIds = setOf(
+            "svc_ophthalmology",
+            "svc_ent",
+            "svc_labs",
+        ),
     ),
     Hospital(
         id = "vs_hospital",
@@ -116,6 +185,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "5.4k rating",
         distanceKm = 3.7,
         isNew = true,
+        serviceIds = setOf(
+            "svc_general_physician",
+            "svc_labs",
+            "svc_vaccination",
+        ),
     ),
     Hospital(
         id = "gleneagles",
@@ -123,6 +197,12 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.6,
         ratingCountText = "33k rating",
         distanceKm = 14.2,
+        serviceIds = setOf(
+            "svc_cardiology",
+            "svc_mri",
+            "svc_ct",
+            "svc_labs",
+        ),
     ),
     Hospital(
         id = "sims",
@@ -130,6 +210,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.4,
         ratingCountText = "17k rating",
         distanceKm = 6.0,
+        serviceIds = setOf(
+            "svc_orthopedics",
+            "svc_ent",
+            "svc_labs",
+        ),
     ),
     Hospital(
         id = "madras_medical",
@@ -137,6 +222,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.5,
         ratingCountText = "24k rating",
         distanceKm = 10.1,
+        serviceIds = setOf(
+            "svc_cardiology",
+            "svc_labs",
+            "svc_xray",
+        ),
     ),
     Hospital(
         id = "ortho_one",
@@ -145,6 +235,10 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "3.2k rating",
         distanceKm = 1.9,
         isNew = true,
+        serviceIds = setOf(
+            "svc_orthopedics",
+            "svc_physio",
+        ),
     ),
     Hospital(
         id = "sankara_nethralaya",
@@ -152,6 +246,10 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.5,
         ratingCountText = "45k rating",
         distanceKm = 5.2,
+        serviceIds = setOf(
+            "svc_ophthalmology",
+            "svc_labs",
+        ),
     ),
     Hospital(
         id = "miot",
@@ -160,6 +258,12 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "31k rating",
         distanceKm = 11.0,
         isTrending = true,
+        serviceIds = setOf(
+            "svc_orthopedics",
+            "svc_physio",
+            "svc_labs",
+            "svc_mri",
+        ),
     ),
     Hospital(
         id = "rajiv_gandhi",
@@ -167,6 +271,13 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 3.9,
         ratingCountText = "8.7k rating",
         distanceKm = 4.4,
+        serviceIds = setOf(
+            "svc_general_physician",
+            "svc_pediatrics",
+            "svc_labs",
+            "svc_xray",
+            "svc_vaccination",
+        ),
     ),
     Hospital(
         id = "adyar_cancer",
@@ -174,6 +285,11 @@ fun sampleHospitals(): List<Hospital> = listOf(
         rating = 4.6,
         ratingCountText = "18k rating",
         distanceKm = 7.9,
+        serviceIds = setOf(
+            "svc_ct",
+            "svc_mri",
+            "svc_labs",
+        ),
     ),
     Hospital(
         id = "velachery_clinic",
@@ -182,6 +298,10 @@ fun sampleHospitals(): List<Hospital> = listOf(
         ratingCountText = "1.2k rating",
         distanceKm = 0.8,
         isNew = true,
+        serviceIds = setOf(
+            "svc_general_physician",
+            "svc_vaccination",
+        ),
     ),
 )
 
