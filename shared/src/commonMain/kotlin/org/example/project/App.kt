@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.example.project.screens.HomeScreen
 import org.example.project.screens.LoginScreen
 import org.example.project.screens.RegisterScreen
+import org.example.project.screens.SearchScreen
 import org.example.project.screens.Screen
 import org.example.project.screens.SplashScreen
 
@@ -32,7 +33,11 @@ fun App() {
                     onBackToLogin = { screen = Screen.Login }
                 )
                 Screen.Home -> HomeScreen(
-                    onLogout = { screen = Screen.Login }
+                    onLogout = { screen = Screen.Login },
+                    onSearch = { screen = Screen.Search }
+                )
+                Screen.Search -> SearchScreen(
+                    onBack = { screen = Screen.Home }
                 )
             }
         }

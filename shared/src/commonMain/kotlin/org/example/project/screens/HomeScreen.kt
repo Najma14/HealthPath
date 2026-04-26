@@ -2,6 +2,7 @@ package org.example.project.screens
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HomeScreen(
     onLogout: () -> Unit,
+    onSearch: () -> Unit,
 ) {
     val categories = remember {
         listOf(
@@ -79,7 +81,8 @@ fun HomeScreen(
 
             Spacer(Modifier.height(16.dp))
             SearchBar(
-                placeholder = "Search for diagnois / hospital"
+                placeholder = "Search for diagnois / hospital",
+                onClick = onSearch
             )
 
             Spacer(Modifier.height(18.dp))
@@ -179,14 +182,18 @@ private fun TopHeader(
 @Composable
 private fun SearchBar(
     placeholder: String,
+    onClick: () -> Unit,
 ) {
     OutlinedTextField(
         value = "",
         onValueChange = {},
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         placeholder = { Text(placeholder) },
         leadingIcon = { BadgeDot() },
         singleLine = true,
+        enabled = false,
         shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,

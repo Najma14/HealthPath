@@ -5,5 +5,6 @@ sealed interface Screen {
     data object Login : Screen
     data object Register : Screen
     data object Home : Screen
+    data object Search : Screen
 }
 
