@@ -99,8 +99,8 @@ fun HomeScreen(
         ) {
             Spacer(Modifier.height(12.dp))
             TopHeader(
-                userName = "Jessica",
-                location = "Bronx, New York, USA",
+                userName = "Kavya Iyer",
+                location = "T. Nagar, Chennai, Tamil Nadu",
                 onNotifications = { /* TODO */ },
             )
 
@@ -376,7 +376,7 @@ private fun ProfileTab(onSignOut: () -> Unit) {
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "J",
+                        text = "K",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.headlineSmall,
@@ -384,9 +384,9 @@ private fun ProfileTab(onSignOut: () -> Unit) {
                 }
                 Spacer(Modifier.width(14.dp))
                 Column(Modifier.weight(1f)) {
-                    Text("Jessica", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.titleMedium)
+                    Text("Kavya Iyer", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "Bronx, New York, USA",
+                        "T. Nagar, Chennai, Tamil Nadu",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
