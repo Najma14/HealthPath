@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,9 +54,11 @@ fun AdvancedBottomBar(
     onSelect: (HomeBottomTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val accent = Color(0xFF6366F1)
-    val accentSoft = Color(0xFFEEF2FF)
-    val outline = Color(0xFFE2E8F0)
+    val scheme = MaterialTheme.colorScheme
+    val accent = scheme.primary
+    val accentSoft = scheme.primaryContainer
+    val outline = scheme.outline
+    val muted = scheme.onSurfaceVariant
 
     Box(
         modifier = modifier
@@ -64,16 +67,16 @@ fun AdvancedBottomBar(
             .shadow(
                 elevation = 18.dp,
                 shape = RoundedCornerShape(28.dp),
-                ambientColor = Color(0x406366F1),
-                spotColor = Color(0x506366F1),
+                ambientColor = accent.copy(alpha = 0.25f),
+                spotColor = accent.copy(alpha = 0.35f),
             )
             .clip(RoundedCornerShape(28.dp))
-            .border(1.dp, outline.copy(alpha = 0.45f), RoundedCornerShape(28.dp))
+            .border(1.dp, outline.copy(alpha = 0.55f), RoundedCornerShape(28.dp))
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color.White.copy(alpha = 0.98f),
-                        Color(0xFFF8FAFC),
+                        scheme.surface.copy(alpha = 0.98f),
+                        scheme.surfaceContainerLow,
                     )
                 )
             )
@@ -87,7 +90,7 @@ fun AdvancedBottomBar(
             HomeBottomTab.entries.forEach { tab ->
                 val isSelected = tab == selected
                 val tint by animateColorAsState(
-                    targetValue = if (isSelected) accent else Color(0xFF94A3B8),
+                    targetValue = if (isSelected) accent else muted,
                     animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
                     label = "tint"
                 )
@@ -125,7 +128,7 @@ fun AdvancedBottomBar(
                                     .clip(RoundedCornerShape(22.dp))
                                     .background(
                                         brush = Brush.horizontalGradient(
-                                            listOf(accentSoft, Color.White.copy(alpha = 0.85f))
+                                            listOf(accentSoft, scheme.surface.copy(alpha = 0.92f))
                                         )
                                     )
                             )

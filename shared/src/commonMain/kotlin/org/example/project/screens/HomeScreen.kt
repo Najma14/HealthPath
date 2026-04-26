@@ -53,6 +53,9 @@ import healthpath.shared.generated.resources.marker_pin
 import healthpath.shared.generated.resources.search_icon
 import org.example.project.components.AdvancedBottomBar
 import org.example.project.components.HomeBottomTab
+import org.example.project.theme.AppTheme
+import org.example.project.theme.LocalAppTheme
+import org.example.project.theme.LocalAppThemeSetter
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,6 +149,8 @@ private data class Category(
 
 @Composable
 private fun ThemePlaceholderTab() {
+    val appTheme = LocalAppTheme.current
+    val setTheme = LocalAppThemeSetter.current
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Theme",
@@ -154,34 +159,56 @@ private fun ThemePlaceholderTab() {
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Pick a look for HealthPath. (Wiring to real dark mode can come next.)",
+            text = "Choose light, dark, or match your device — same idea as the rikaab driver app.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(20.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            ThemeChip(label = "Light", selected = true)
-            ThemeChip(label = "Dark", selected = false)
-            ThemeChip(label = "System", selected = false)
+            ThemeChip(
+                label = "Light",
+                selected = appTheme == AppTheme.LIGHT,
+                onClick = { setTheme(AppTheme.LIGHT) },
+            )
+            ThemeChip(
+                label = "Dark",
+                selected = appTheme == AppTheme.DARK,
+                onClick = { setTheme(AppTheme.DARK) },
+            )
+            ThemeChip(
+                label = "System",
+                selected = appTheme == AppTheme.SYSTEM,
+                onClick = { setTheme(AppTheme.SYSTEM) },
+            )
         }
     }
 }
 
 @Composable
-private fun ThemeChip(label: String, selected: Boolean) {
+private fun ThemeChip(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val scheme = MaterialTheme.colorScheme
     val bg = if (selected) {
-        Brush.linearGradient(listOf(Color(0xFF6366F1), Color(0xFF8B5CF6)))
+        Brush.linearGradient(listOf(scheme.primary, scheme.tertiary))
     } else {
-        Brush.linearGradient(listOf(Color(0xFFF1F5F9), Color(0xFFE2E8F0)))
+        Brush.linearGradient(
+            listOf(
+                scheme.surfaceVariant,
+                scheme.surfaceContainerHigh,
+            )
+        )
     }
     Text(
         text = label,
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
+            .clickable { onClick() }
             .background(bg)
-            .clickable { }
             .padding(horizontal = 18.dp, vertical = 10.dp),
-        color = if (selected) Color.White else Color(0xFF475569),
+        color = if (selected) scheme.onPrimary else scheme.onSurfaceVariant,
         fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
     )
 }
@@ -192,7 +219,7 @@ private fun FavouritesPlaceholderTab() {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .background(Color(0xFFF8FAFC))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

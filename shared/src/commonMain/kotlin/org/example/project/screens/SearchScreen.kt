@@ -112,17 +112,17 @@ fun SearchScreen(
                 singleLine = true,
                 shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = Color(0xFFF7F7F7),
-                    focusedContainerColor = Color(0xFFF7F7F7),
-                    unfocusedBorderColor = Color(0xFFE6E6E6),
-                    focusedBorderColor = Color(0xFFE6E6E6),
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                    focusedBorderColor = MaterialTheme.colorScheme.outline,
                 )
             )
 
             Spacer(Modifier.height(8.dp))
             Text(
                 text = "${filtered.size} hospitals found in Chennai India",
-                color = Color(0xFF9AA0A6),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall
             )
 
@@ -154,7 +154,9 @@ private fun HospitalCard(
                 .fillMaxWidth()
                 .height(150.dp),
             shape = RoundedCornerShape(18.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFF2F5FF)),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            ),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             Box(
@@ -167,7 +169,7 @@ private fun HospitalCard(
                         .align(Alignment.BottomStart)
                         .padding(16.dp)
                         .size(52.dp)
-                        .background(Color.White.copy(alpha = 0.35f), CircleShape)
+                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), CircleShape)
                 )
             }
         }
@@ -180,9 +182,9 @@ private fun HospitalCard(
         Spacer(Modifier.height(4.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("⭐ ${hospital.rating}", fontWeight = FontWeight.SemiBold)
-            Text(" (${hospital.ratingCountText})", color = Color(0xFF9AA0A6))
+            Text(" (${hospital.ratingCountText})", color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.size(10.dp))
-            Text("📍 ${hospital.distanceKm}km away", color = Color(0xFF9AA0A6))
+            Text("📍 ${hospital.distanceKm}km away", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
