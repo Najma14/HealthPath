@@ -61,6 +61,7 @@ fun HospitalBrowseScreen(
                 .weight(1f)
                 .padding(horizontal = 20.dp)
         ) {
+            Spacer(Modifier.height(10.dp))
             if (items.isNotEmpty()) {
                 HospitalSearchField(
                     value = query,
