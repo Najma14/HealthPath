@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import org.example.project.auth.createAuthStorage
 import org.example.project.screens.HomeScreen
 import org.example.project.screens.HospitalBrowseScreen
@@ -26,7 +25,6 @@ import org.example.project.theme.LocalAppTheme
 import org.example.project.theme.LocalAppThemeSetter
 
 @Composable
-@Preview
 fun App() {
     var appTheme by remember { mutableStateOf(AppTheme.SYSTEM) }
     val systemDark = isSystemInDarkTheme()
