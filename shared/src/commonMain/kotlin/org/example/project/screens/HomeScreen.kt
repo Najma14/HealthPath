@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -53,6 +56,9 @@ import healthpath.shared.generated.resources.marker_pin
 import healthpath.shared.generated.resources.search_icon
 import org.example.project.components.AdvancedBottomBar
 import org.example.project.components.HomeBottomTab
+import org.example.project.components.HospitalListCard
+import org.example.project.data.HospitalBrowseMode
+import org.example.project.data.sampleHospitals
 import org.example.project.theme.AppTheme
 import org.example.project.theme.LocalAppTheme
 import org.example.project.theme.LocalAppThemeSetter
@@ -63,17 +69,20 @@ import org.jetbrains.compose.resources.painterResource
 fun HomeScreen(
     onLogout: () -> Unit,
     onSearch: () -> Unit,
+    favoriteHospitalIds: Set<String>,
+    onToggleFavorite: (String) -> Unit,
+    onBrowseHospitals: (String, HospitalBrowseMode) -> Unit,
 ) {
     var selectedTab by remember { mutableStateOf(HomeBottomTab.Home) }
 
     val categories = remember {
         listOf(
-            Category("Nearpy", "N", Color(0xFF3B82F6)),
-            Category("Favourites", "F", Color(0xFF06B6D4)),
-            Category("Top 10", "10", Color(0xFF60A5FA)),
-            Category("Trending", "T", Color(0xFF1D4ED8)),
-            Category("New Additions", "+", Color(0xFF2563EB)),
-            Category("View All", "A", Color(0xFF64748B)),
+            Category("Nearpy", "N", Color(0xFF3B82F6), CategoryNav.Browse("Nearpy", HospitalBrowseMode.Nearby)),
+            Category("Favourites", "F", Color(0xFF06B6D4), CategoryNav.OpenFavouritesTab),
+            Category("Top 10", "10", Color(0xFF60A5FA), CategoryNav.Browse("Top 10", HospitalBrowseMode.Top10)),
+            Category("Trending", "T", Color(0xFF1D4ED8), CategoryNav.Browse("Trending", HospitalBrowseMode.Trending)),
+            Category("New Additions", "+", Color(0xFF2563EB), CategoryNav.Browse("New Additions", HospitalBrowseMode.NewAdditions)),
+            Category("View All", "A", Color(0xFF64748B), CategoryNav.Browse("All hospitals", HospitalBrowseMode.ViewAll)),
         )
     }
 
@@ -120,13 +129,25 @@ fun HomeScreen(
                             CategoryCard(
                                 label = item.label,
                                 badge = item.badge,
-                                accent = item.accent
+                                accent = item.accent,
+                                onClick = {
+                                    when (val nav = item.nav) {
+                                        CategoryNav.OpenFavouritesTab -> selectedTab = HomeBottomTab.Favourites
+                                        is CategoryNav.Browse -> onBrowseHospitals(nav.title, nav.mode)
+                                    }
+                                },
                             )
                         }
                     }
                 }
                 HomeBottomTab.Theme -> ThemePlaceholderTab()
-                HomeBottomTab.Favourites -> FavouritesPlaceholderTab()
+                HomeBottomTab.Favourites -> FavouritesTab(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    favoriteHospitalIds = favoriteHospitalIds,
+                    onToggleFavorite = onToggleFavorite,
+                )
                 HomeBottomTab.Profile -> ProfileTab(onSignOut = onLogout)
             }
         }
@@ -141,10 +162,16 @@ fun HomeScreen(
     }
 }
 
+private sealed interface CategoryNav {
+    data object OpenFavouritesTab : CategoryNav
+    data class Browse(val title: String, val mode: HospitalBrowseMode) : CategoryNav
+}
+
 private data class Category(
     val label: String,
     val badge: String,
     val accent: Color,
+    val nav: CategoryNav,
 )
 
 @Composable
@@ -214,35 +241,79 @@ private fun ThemeChip(
 }
 
 @Composable
-private fun FavouritesPlaceholderTab() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+private fun FavouritesTab(
+    modifier: Modifier = Modifier,
+    favoriteHospitalIds: Set<String>,
+    onToggleFavorite: (String) -> Unit,
+) {
+    val all = remember { sampleHospitals() }
+    val favourites = remember(favoriteHospitalIds, all) {
+        all.filter { it.id in favoriteHospitalIds }
+    }
+
+    LazyColumn(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+        contentPadding = PaddingValues(bottom = 20.dp)
     ) {
-        Text(
-            text = "Favourites",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Spacer(Modifier.height(10.dp))
-        Text(
-            text = "Hospitals you save will show up here.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(Modifier.height(18.dp))
-        Text(
-            text = "No favourites yet",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        item {
+            Text(
+                text = "Favourites",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Same list style as search — tap ♡ on any hospital card to save it.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(16.dp))
+        }
+        if (favourites.isEmpty()) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = "No favourites yet",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "Open Search or a category list and tap the heart on a hospital.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+        } else {
+            item {
+                Text(
+                    text = "${favourites.size} saved hospitals",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Spacer(Modifier.height(12.dp))
+            }
+            itemsIndexed(favourites) { idx, h ->
+                HospitalListCard(
+                    hospital = h,
+                    accent = if (idx % 2 == 0) Color(0xFF4F7DF3) else Color(0xFF8BC34A),
+                    isFavorite = true,
+                    onToggleFavorite = { onToggleFavorite(h.id) },
+                )
+            }
+        }
     }
 }
 
@@ -417,8 +488,12 @@ private fun CategoryCard(
     label: String,
     badge: String,
     accent: Color,
+    onClick: () -> Unit,
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.clickable { onClick() },
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()

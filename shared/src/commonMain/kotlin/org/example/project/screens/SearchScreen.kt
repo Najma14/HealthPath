@@ -2,21 +2,15 @@ package org.example.project.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -28,49 +22,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.components.AppToolbar
-
-private data class Hospital(
-    val name: String,
-    val rating: Double,
-    val ratingCountText: String,
-    val distanceKm: Double,
-)
+import org.example.project.components.HospitalListCard
+import org.example.project.data.sampleHospitals
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     onBack: () -> Unit,
+    favoriteHospitalIds: Set<String>,
+    onToggleFavorite: (String) -> Unit,
 ) {
-    val all = remember {
-        listOf(
-            Hospital(
-                name = "Apollo Hospitals Chennai",
-                rating = 4.5,
-                ratingCountText = "51k rating",
-                distanceKm = 2.9
-            ),
-            Hospital(
-                name = "City Care Medical Center",
-                rating = 4.2,
-                ratingCountText = "12k rating",
-                distanceKm = 4.1
-            ),
-            Hospital(
-                name = "Green Valley Clinic",
-                rating = 4.0,
-                ratingCountText = "4.8k rating",
-                distanceKm = 1.4
-            ),
-        )
-    }
+    val all = remember { sampleHospitals() }
 
     // Always start empty so the field opens focused with no “filled” text.
     var query by remember { mutableStateOf("") }
@@ -79,7 +47,7 @@ fun SearchScreen(
         focusRequester.requestFocus()
     }
 
-    val filtered = remember(query) {
+    val filtered = remember(query, all) {
         val q = query.trim()
         if (q.isEmpty()) all else all.filter { it.name.contains(q, ignoreCase = true) }
     }
@@ -133,58 +101,14 @@ fun SearchScreen(
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 20.dp)
             ) {
                 itemsIndexed(filtered) { idx, h ->
-                    HospitalCard(
+                    HospitalListCard(
                         hospital = h,
-                        accent = if (idx % 2 == 0) Color(0xFF4F7DF3) else Color(0xFF8BC34A)
+                        accent = if (idx % 2 == 0) Color(0xFF4F7DF3) else Color(0xFF8BC34A),
+                        isFavorite = h.id in favoriteHospitalIds,
+                        onToggleFavorite = { onToggleFavorite(h.id) },
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun HospitalCard(
-    hospital: Hospital,
-    accent: Color,
-) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp),
-            shape = RoundedCornerShape(18.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(accent.copy(alpha = 0.22f))
-            ) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(16.dp)
-                        .size(52.dp)
-                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), CircleShape)
-                )
-            }
-        }
-
-        Spacer(Modifier.height(10.dp))
-        Text(
-            text = hospital.name,
-            fontWeight = FontWeight.SemiBold
-        )
-        Spacer(Modifier.height(4.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("⭐ ${hospital.rating}", fontWeight = FontWeight.SemiBold)
-            Text(" (${hospital.ratingCountText})", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Spacer(Modifier.size(10.dp))
-            Text("📍 ${hospital.distanceKm}km away", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

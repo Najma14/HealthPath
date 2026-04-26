@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.example.project.screens.HomeScreen
+import org.example.project.screens.HospitalBrowseScreen
 import org.example.project.screens.LoginScreen
 import org.example.project.screens.RegisterScreen
 import org.example.project.screens.SearchScreen
@@ -48,6 +49,12 @@ fun App() {
                 color = MaterialTheme.colorScheme.background,
             ) {
                 var screen by remember { mutableStateOf<Screen>(Screen.Splash) }
+                var favoriteHospitalIds by remember { mutableStateOf(setOf<String>()) }
+                val toggleFavorite: (String) -> Unit = { id: String ->
+                    favoriteHospitalIds =
+                        if (id in favoriteHospitalIds) favoriteHospitalIds - id
+                        else favoriteHospitalIds + id
+                }
 
                 when (screen) {
                     Screen.Splash -> SplashScreen(
@@ -63,11 +70,28 @@ fun App() {
                     )
                     Screen.Home -> HomeScreen(
                         onLogout = { screen = Screen.Login },
-                        onSearch = { screen = Screen.Search }
+                        onSearch = { screen = Screen.Search },
+                        favoriteHospitalIds = favoriteHospitalIds,
+                        onToggleFavorite = toggleFavorite,
+                        onBrowseHospitals = { title, mode ->
+                            screen = Screen.HospitalBrowse(title, mode)
+                        },
                     )
                     Screen.Search -> SearchScreen(
-                        onBack = { screen = Screen.Home }
+                        onBack = { screen = Screen.Home },
+                        favoriteHospitalIds = favoriteHospitalIds,
+                        onToggleFavorite = toggleFavorite,
                     )
+                    is Screen.HospitalBrowse -> {
+                        val browse = screen as Screen.HospitalBrowse
+                        HospitalBrowseScreen(
+                            title = browse.title,
+                            mode = browse.mode,
+                            favoriteHospitalIds = favoriteHospitalIds,
+                            onToggleFavorite = toggleFavorite,
+                            onBack = { screen = Screen.Home },
+                        )
+                    }
                 }
             }
         }
